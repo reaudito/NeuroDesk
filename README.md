@@ -4,7 +4,6 @@
 
  Uses `qwen3:latest` Models
 
- Todo: Make model loading dynamic.
 
  ## Install Ollama
  https://ollama.com

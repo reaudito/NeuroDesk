@@ -71,6 +71,20 @@ fn navbar_items() -> impl IntoView {
                 "Home"
             </a>
 
+            <a
+                href="/query"
+                class="block py-2 px-4 text-gray-700 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+            >
+                "Query AI"
+            </a>
+
+            <a
+                href="/models"
+                class="block py-2 px-4 text-gray-700 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+            >
+                "Models"
+            </a>
+
             <button
                 class="bg-gray-400 dark:bg-gray-600 text-white py-2 px-4 rounded-xl hover:bg-gray-500 dark:hover:bg-gray-500"
                 on:click=toggle_dark_mode
