@@ -6,6 +6,13 @@
 
  Todo: Make model loading dynamic.
 
+ ## Install Ollama
+ https://ollama.com
+
+ ```bash
+ ollama run qwen3:latest
+ ```
+
 ## Tailwindcss
 
 ```bash
