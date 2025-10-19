@@ -1,6 +1,6 @@
 # NeuroDesk
 
-Neurodesk: A Lightweight Frontend Built on Tauri and Lepos
+Neurodesk: A Lightweight Ollama Client App Built on Tauri and Leptos
 
 Install Ollama and make Neurodesk your offline AI assistant
 
