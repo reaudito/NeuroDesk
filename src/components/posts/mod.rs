@@ -4,3 +4,5 @@ pub mod post_by_model;
 pub mod post_by_model_stream;
 pub mod query_ai;
 pub mod stream_ai;
+pub mod stream_ai_thinking;
+pub mod thinking_post_by_model_stream;

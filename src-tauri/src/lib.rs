@@ -13,7 +13,7 @@ use tokio_stream::StreamExt;
 pub mod types;
 pub use types::*;
 pub mod ai;
-pub use ai::ai_functions::stream_ai_model;
+pub use ai::ai_functions::{stream_ai_model, stream_ai_thinking_model};
 
 // pub use database::db_functions::{create_schema, initialize_db};
 
@@ -77,6 +77,7 @@ pub fn run() {
             list_models,
             ask_ai_model,
             stream_ai_model,
+            stream_ai_thinking_model,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

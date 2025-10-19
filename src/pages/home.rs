@@ -1,7 +1,9 @@
 // use crate::components::counter_btn::Button;
 use crate::components::navigation::nav::Nav;
 // use crate::components::posts::create_post::CreatePost;
-use crate::components::posts::post_by_model::CreatePostWithModels;
+// use crate::components::posts::post_by_model::CreatePostWithModels;
+use crate::components::posts::post_by_model_stream::StreamAiModelView;
+
 use leptos::prelude::*;
 
 /// Default Home Page
@@ -42,7 +44,7 @@ pub fn Home() -> impl IntoView {
 
 
 
-                <CreatePostWithModels />
+                <StreamAiModelView />
 
             </main>
         </ErrorBoundary>

@@ -38,3 +38,31 @@ pub async fn stream_ai_model(
 
     Ok(())
 }
+
+#[tauri::command(rename_all = "snake_case")]
+pub async fn stream_ai_thinking_model(
+    app_handle: AppHandle,
+    content: String,
+    model: String,
+) -> Result<(), String> {
+    let ollama = Ollama::new("http://localhost".to_string(), 11434);
+
+    let mut req = GenerationRequest::new(model, content);
+
+    let mut stream = ollama
+        .generate_stream(req)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    while let Some(res) = stream.next().await {
+        let responses = res.map_err(|e| e.to_string())?;
+        for resp in responses {
+            // ✅ send to all webviews (recommended)
+            app_handle
+                .emit("ai-stream", resp.response.clone())
+                .map_err(|e| e.to_string())?;
+        }
+    }
+
+    Ok(())
+}
