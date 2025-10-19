@@ -1,5 +1,9 @@
 # NeuroDesk
 
+Neurodesk: A Lightweight Frontend Built on Tauri and Lepos
+
+Install Ollama and make Neurodesk your offline AI assistant
+
  Chat with Ollama Models
 
  Uses `qwen3:latest` Models
