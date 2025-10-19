@@ -1,5 +1,6 @@
 use crate::components::posts::list_models::ModelList;
 use crate::components::posts::query_ai::QueryAi;
+use crate::components::posts::stream_ai::StreamAi;
 use crate::pages::home::Home;
 use leptos::prelude::*;
 use leptos_router::components::*;
@@ -12,6 +13,7 @@ pub fn RouterApp() -> impl IntoView {
                 <Route path=path!("/") view=Home />
                 <Route path=path!("/models") view=ModelList />
                 <Route path=path!("/query") view=QueryAi />
+                <Route path=path!("/stream-query") view=StreamAi />
             </Routes>
         </Router>
     }

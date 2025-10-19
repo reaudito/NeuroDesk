@@ -2,9 +2,21 @@ use ollama_rs::generation::completion::request::GenerationRequest;
 use ollama_rs::models::LocalModel;
 use ollama_rs::Ollama;
 use serde_json::{json, Value};
+use tauri::async_runtime::spawn;
+use tauri::AppHandle;
+use tauri::Emitter;
+use tauri::{Manager, State};
 use tauri_plugin_store::StoreExt;
+use tokio::io::{self, AsyncWriteExt};
+use tokio::sync::Mutex;
+use tokio_stream::StreamExt;
 pub mod types;
 pub use types::*;
+pub mod ai;
+pub use ai::ai_functions::stream_ai_model;
+
+// pub use database::db_functions::{create_schema, initialize_db};
+
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
@@ -63,7 +75,8 @@ pub fn run() {
             greet,
             ask_ai,
             list_models,
-            ask_ai_model
+            ask_ai_model,
+            stream_ai_model,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

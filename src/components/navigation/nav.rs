@@ -79,6 +79,13 @@ fn navbar_items() -> impl IntoView {
             </a>
 
             <a
+                href="/stream-query"
+                class="block py-2 px-4 text-gray-700 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+            >
+                "Stream AI"
+            </a>
+
+            <a
                 href="/models"
                 class="block py-2 px-4 text-gray-700 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
             >
