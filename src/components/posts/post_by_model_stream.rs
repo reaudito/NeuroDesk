@@ -9,15 +9,12 @@ use web_sys::Event;
 
 #[wasm_bindgen]
 extern "C" {
-    // Core invoke
     #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
     async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 
-    // Invoke without args
     #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"], js_name = invoke)]
     async fn invoke_without_args(cmd: &str) -> JsValue;
 
-    // Listen for Tauri events
     #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "event"])]
     async fn listen(event: &str, callback: &js_sys::Function) -> JsValue;
 }
@@ -37,14 +34,12 @@ struct StreamAiArgs {
 
 #[component]
 pub fn StreamAiModelView() -> impl IntoView {
-    // State
     let (post, set_post) = signal(String::new());
     let (response, set_response) = signal(String::new());
     let (is_loading, set_is_loading) = signal(false);
     let (models, set_models) = signal::<Vec<ModelData>>(vec![]);
     let (selected_model, set_selected_model) = signal(String::new());
 
-    // Load available models on mount
     spawn_local(async move {
         let res = invoke_without_args("list_models").await;
         if let Ok(list) = from_value::<Vec<ModelData>>(res) {
@@ -55,12 +50,10 @@ pub fn StreamAiModelView() -> impl IntoView {
         }
     });
 
-    // Setup event listener for "ai-stream"
     spawn_local({
         let set_response = set_response.clone();
         async move {
             let callback = Closure::<dyn FnMut(JsValue)>::new(move |event| {
-                // Parse the streamed data
                 if let Some(data) = js_sys::Reflect::get(&event, &JsValue::from_str("payload"))
                     .ok()
                     .and_then(|v| v.as_string())
@@ -68,34 +61,45 @@ pub fn StreamAiModelView() -> impl IntoView {
                     set_response.update(|r| r.push_str(&data));
                 }
             });
-
-            // Listen for events
             let _ = listen("ai-stream", callback.as_ref().unchecked_ref()).await;
-            callback.forget(); // prevent drop
+            callback.forget();
         }
     });
 
-    // Start AI streaming
+    // Listen for cancellation event to reset loading state
+    spawn_local({
+        async move {
+            let callback = Closure::<dyn FnMut(JsValue)>::new(move |_| {
+                set_is_loading.set(false);
+            });
+            let _ = listen("ai-stream-cancelled", callback.as_ref().unchecked_ref()).await;
+            callback.forget();
+        }
+    });
+
     let stream_ai = move |_| {
         let content = post.get();
         let model = selected_model.get();
         if content.is_empty() || model.is_empty() {
             return;
         }
-
-        // Reset output before streaming
         set_response.set(String::new());
         set_is_loading.set(true);
 
         spawn_local(async move {
             let args = to_value(&StreamAiArgs { content, model }).unwrap();
             let _ = invoke("stream_ai_model", args).await;
-            // After stream ends, mark as done
             set_is_loading.set(false);
         });
     };
 
-    // Clear UI
+    // 👇 Stop button handler
+    let stop_stream = move |_| {
+        spawn_local(async move {
+            let _ = invoke_without_args("stop_stream").await;
+        });
+    };
+
     let clear = move |_| {
         set_post.set(String::new());
         set_response.set(String::new());
@@ -105,7 +109,6 @@ pub fn StreamAiModelView() -> impl IntoView {
         <div class="p-4 dark:bg-gray-900 dark:text-white">
             <h2 class="text-xl font-bold mb-2">"AI Streaming Assistant"</h2>
 
-            // Select model
             <label class="block mb-2">"Choose a model:"</label>
             <select
                 class="appearance-none mb-4 p-2 border rounded
@@ -118,14 +121,11 @@ pub fn StreamAiModelView() -> impl IntoView {
                     each=move || models.get()
                     key=|m| m.name.clone()
                     children=move |m: ModelData| {
-                        view! {
-                            <option value=m.name.clone()>{m.name.clone()}</option>
-                        }
+                        view! { <option value=m.name.clone()>{m.name.clone()}</option> }
                     }
                 />
             </select>
 
-            // Input text
             <textarea
                 class="w-full h-48 p-2 border rounded dark:bg-gray-800"
                 placeholder="Write your prompt here..."
@@ -133,16 +133,26 @@ pub fn StreamAiModelView() -> impl IntoView {
                 on:input=move |e| set_post.set(event_target_value(&e))
             />
 
-            // Buttons
             <div class="flex space-x-4 mt-2">
+                // Start button — hidden while streaming
                 <button
-                    class="px-4 py-2 bg-blue-500 text-white rounded"
+                    class="px-4 py-2 bg-blue-500 text-white rounded
+                           disabled:opacity-50 disabled:cursor-not-allowed"
                     on:click=stream_ai
                     disabled=move || is_loading.get()
                 >
-                    {move || if is_loading.get() { "Streaming..." } else { "Start Stream" }}
+                    "Start Stream"
                 </button>
 
+                // 👇 Stop button — only visible while streaming
+                {move || is_loading.get().then(|| view! {
+                    <button
+                        class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded"
+                        on:click=stop_stream
+                    >
+                        "Stop"
+                    </button>
+                })}
 
                 <button
                     class="px-4 py-2 bg-gray-500 text-white rounded"
@@ -152,9 +162,7 @@ pub fn StreamAiModelView() -> impl IntoView {
                 </button>
             </div>
 
-            // Live Streamed Response
-            <div class="mt-4 p-4 border rounded
-                        bg-gray-50 dark:bg-gray-800 text-sm">
+            <div class="mt-4 p-4 border rounded bg-gray-50 dark:bg-gray-800 text-sm">
                 {move || {
                     let html = response
                         .get()

@@ -1,6 +1,6 @@
 [package]
 name = "neurodesk"
-version = "0.3.1"
+version = "0.3.3"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
@@ -29,3 +29,4 @@ tokio = { version = "1", features = ["full"] }
 tokio-stream = { version = "0.1.17", features = ["full"] }
 anyhow = "1.0.100"
 turso = "0.2.2"
+tokio-util = { version = "0.7", features = ["rt"] }

@@ -13,8 +13,7 @@ use tokio_stream::StreamExt;
 pub mod types;
 pub use types::*;
 pub mod ai;
-pub use ai::ai_functions::{stream_ai_model, stream_ai_thinking_model};
-
+pub use ai::ai_functions::{stream_ai_model, stream_ai_thinking_model, stop_stream};
 // pub use database::db_functions::{create_schema, initialize_db};
 
 #[tauri::command]
@@ -69,6 +68,7 @@ async fn ask_ai_model(content: String, model: String) -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .manage(StreamState::default())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
@@ -78,6 +78,7 @@ pub fn run() {
             ask_ai_model,
             stream_ai_model,
             stream_ai_thinking_model,
+            stop_stream,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

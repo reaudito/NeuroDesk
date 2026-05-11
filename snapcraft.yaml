@@ -4,7 +4,7 @@ website: https://github.com/reaudito/NeuroDesk
 source-code: https://github.com/reaudito/NeuroDesk
 issues: https://github.com/reaudito/NeuroDesk/issues
 base: core24
-version: "0.3.1"
+version: "0.3.2"
 summary: "Neurodesk: A Lightweight Ollama Client App"
 description: |
   Neurodesk: A Lightweight Ollama Client App Built on Tauri and Leptos.
@@ -75,5 +75,5 @@ parts:
     source: .
     override-build: |
       set -eu
-      dpkg -x target/release/bundle/deb/neurodesk_0.3.1_amd64.deb $SNAPCRAFT_PART_INSTALL/
+      dpkg -x target/release/bundle/deb/neurodesk_0.3.2_amd64.deb $SNAPCRAFT_PART_INSTALL/
       sed -i -e "s|Icon=neurodesk|Icon=/usr/share/icons/hicolor/32x32/apps/neurodesk.png|g" $SNAPCRAFT_PART_INSTALL/usr/share/applications/neurodesk.desktop
