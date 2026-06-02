@@ -9,6 +9,8 @@ Install Ollama and make Neurodesk your offline AI assistant
  Uses `qwen3:latest` Models
 
 
+[![Get it from the Snap Store](https://snapcraft.io/en/dark/install.svg)](https://snapcraft.io/neurodesk)
+
  ## Install Ollama
  https://ollama.com
 
