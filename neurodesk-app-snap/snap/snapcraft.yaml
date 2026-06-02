@@ -1,0 +1,34 @@
+name: neurodesk
+title: Neurodesk
+website: https://github.com/reaudito/NeuroDesk
+source-code: https://github.com/reaudito/NeuroDesk
+issues: https://github.com/reaudito/NeuroDesk/issues
+base: core24
+version: "0.3.3"
+icon: gui/neurodesk.png
+summary: "Neurodesk: A Lightweight Ollama Client App"
+description: |
+  Neurodesk: A Lightweight Ollama Client App Built on Tauri and Leptos.
+  Install Ollama and make Neurodesk your offline AI assistant.
+
+grade: stable
+confinement: strict
+
+apps:
+  neurodesk:
+    command: usr/bin/neurodesk
+    desktop: usr/share/applications/neurodesk.desktop
+    extensions: [gnome]
+    plugs:
+      - network
+      - home
+      - desktop
+      - desktop-legacy
+      - wayland
+      - x11
+
+parts:
+  neurodesk:
+    plugin: dump
+    source: neurodesk_0.3.3_amd64.deb
+    source-type: deb
