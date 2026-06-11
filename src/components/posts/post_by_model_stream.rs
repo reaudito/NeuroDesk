@@ -1,8 +1,13 @@
 use crate::components::common::spinner::LoadingSpinner;
+use comrak::{
+    markdown_to_html_with_plugins, options::Plugins, plugins::syntect::SyntectAdapter, Options,
+};
 use leptos::prelude::*;
 use leptos::task::spawn_local;
+use leptos_use::{use_clipboard, UseClipboardReturn};
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};
+use std::sync::OnceLock;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::Event;
@@ -32,6 +37,30 @@ struct StreamAiArgs {
     model: String,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum OutputTab {
+    Rendered,
+    Markdown,
+}
+
+static ADAPTER: OnceLock<SyntectAdapter> = OnceLock::new();
+
+fn render_markdown(markdown: &str) -> String {
+    let adapter = ADAPTER.get_or_init(|| SyntectAdapter::new(Some("base16-ocean.dark")));
+
+    let mut plugins = Plugins::default();
+    plugins.render.codefence_syntax_highlighter = Some(adapter);
+
+    let mut options = Options::default();
+
+    options.extension.table = true;
+    options.extension.strikethrough = true;
+    options.extension.tasklist = true;
+    options.extension.footnotes = true;
+
+    markdown_to_html_with_plugins(markdown, &options, &plugins)
+}
+
 #[component]
 pub fn StreamAiModelView() -> impl IntoView {
     let (post, set_post) = signal(String::new());
@@ -39,6 +68,14 @@ pub fn StreamAiModelView() -> impl IntoView {
     let (is_loading, set_is_loading) = signal(false);
     let (models, set_models) = signal::<Vec<ModelData>>(vec![]);
     let (selected_model, set_selected_model) = signal(String::new());
+    let (active_tab, set_active_tab) = signal(OutputTab::Rendered);
+
+    let UseClipboardReturn {
+        is_supported,
+        copied,
+        copy,
+        ..
+    } = use_clipboard();
 
     spawn_local(async move {
         let res = invoke_without_args("list_models").await;
@@ -160,26 +197,105 @@ pub fn StreamAiModelView() -> impl IntoView {
                 >
                     "Clear"
                 </button>
+
+                <Show when=move || is_supported.get()>
+                    <button
+                        class="px-4 py-2 bg-green-600 text-white rounded"
+                        on:click={
+                            let copy = copy.clone();
+                            move |_| {
+                                copy(&response.get());
+                            }
+                        }
+                    >
+                        {move || {
+                            if copied.get() {
+                                "Copied Markdown!"
+                            } else {
+                                "Copy Markdown"
+                            }
+                        }}
+                    </button>
+                </Show>
             </div>
 
-            <div class="mt-4 p-4 border rounded bg-gray-50 dark:bg-gray-800 text-sm">
-                {move || {
-                    let html = response
-                        .get()
-                        .replace("\n", "<br>")
-                        .replace("<think>", r#"<think><span class="italic text-sm">"#)
-                        .replace("</think>", "</span></think>");
-                    if is_loading.get() {
-                        view! {
-                            <>
-                                <LoadingSpinner />
-                                <div inner_html=html></div>
-                            </>
-                        }.into_any()
-                    } else {
-                        view! { <div inner_html=html></div> }.into_any()
-                    }
-                }}
+            <div class="mt-4">
+
+                // Tabs
+                <div class="flex border-b dark:border-gray-700">
+                    <button
+                        class=move || {
+                            if active_tab.get() == OutputTab::Rendered {
+                                "px-4 py-2 border-b-2 border-blue-500 font-medium"
+                            } else {
+                                "px-4 py-2 text-gray-500"
+                            }
+                        }
+                        on:click=move |_| set_active_tab.set(OutputTab::Rendered)
+                    >
+                        "Rendered"
+                    </button>
+
+                    <button
+                        class=move || {
+                            if active_tab.get() == OutputTab::Markdown {
+                                "px-4 py-2 border-b-2 border-blue-500 font-medium"
+                            } else {
+                                "px-4 py-2 text-gray-500"
+                            }
+                        }
+                        on:click=move |_| set_active_tab.set(OutputTab::Markdown)
+                    >
+                        "Markdown"
+                    </button>
+                </div>
+
+                // Content
+                <div class="p-4 border border-t-0 rounded-b bg-gray-50 dark:bg-gray-800 text-sm">
+
+                    {move || {
+                        match active_tab.get() {
+
+                            OutputTab::Rendered => {
+                                let rendered_html = Memo::new(move |_| {
+                                    render_markdown(&response.get())
+                                });
+
+                                if is_loading.get() {
+                                    view! {
+                                        <>
+                                            <LoadingSpinner />
+                                            <pre>{response.get()}</pre>
+                                        </>
+                                    }.into_any()
+                                } else {
+                                    let html = render_markdown(&response.get());
+                                    view! {
+                                        <div
+                                            class="prose dark:prose-invert max-w-none"
+                                            inner_html=html
+                                        />
+                                    }.into_any()
+                                }
+                            }
+
+                            OutputTab::Markdown => {
+                                view! {
+                                    <pre class="
+                                        overflow-x-auto
+                                        whitespace-pre-wrap
+                                        break-words
+                                        text-sm
+                                        font-mono
+                                    ">
+                                        {response.get()}
+                                    </pre>
+                                }.into_any()
+                            }
+                        }
+                    }}
+
+                </div>
             </div>
         </div>
     }

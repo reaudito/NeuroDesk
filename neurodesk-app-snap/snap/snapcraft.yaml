@@ -4,7 +4,7 @@ website: https://github.com/reaudito/NeuroDesk
 source-code: https://github.com/reaudito/NeuroDesk
 issues: https://github.com/reaudito/NeuroDesk/issues
 base: core24
-version: "0.3.3"
+version: "0.3.4"
 icon: gui/neurodesk.png
 summary: "Neurodesk: A Lightweight Ollama Client App"
 description: |
@@ -30,5 +30,5 @@ apps:
 parts:
   neurodesk:
     plugin: dump
-    source: neurodesk_0.3.3_amd64.deb
+    source: neurodesk_0.3.4_amd64.deb
     source-type: deb
