@@ -2,7 +2,7 @@
 use crate::components::navigation::nav::Nav;
 // use crate::components::posts::create_post::CreatePost;
 // use crate::components::posts::post_by_model::CreatePostWithModels;
-use crate::components::posts::post_by_model_stream::StreamAiModelView;
+use crate::components::posts::post_by_model_stream_chat::StreamAiModelChatView;
 
 use leptos::prelude::*;
 
@@ -44,7 +44,7 @@ pub fn Home() -> impl IntoView {
 
 
 
-                <StreamAiModelView />
+                <StreamAiModelChatView />
 
             </main>
         </ErrorBoundary>

@@ -71,12 +71,7 @@ fn navbar_items() -> impl IntoView {
                 "Home"
             </a>
 
-            <a
-                href="/query"
-                class="block py-2 px-4 text-gray-700 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-            >
-                "Query AI"
-            </a>
+
 
             <a
                 href="/stream-query"
@@ -85,13 +80,25 @@ fn navbar_items() -> impl IntoView {
                 "Stream AI"
             </a>
 
-
+            <a
+                href="/stream-query-chat"
+                class="block py-2 px-4 text-gray-700 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+            >
+                "Stream AI Chat"
+            </a>
 
             <a
                 href="/stream-thinking"
                 class="block py-2 px-4 text-gray-700 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
             >
                 "Stream Thinking AI"
+            </a>
+
+            <a
+                href="/query"
+                class="block py-2 px-4 text-gray-700 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+            >
+                "Query AI"
             </a>
 
             <a
