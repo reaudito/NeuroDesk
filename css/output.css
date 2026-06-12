@@ -631,6 +631,9 @@
   .table {
     display: table;
   }
+  .h-0 {
+    height: calc(var(--spacing) * 0);
+  }
   .h-3 {
     height: calc(var(--spacing) * 3);
   }
@@ -639,6 +642,9 @@
   }
   .h-6 {
     height: calc(var(--spacing) * 6);
+  }
+  .h-8 {
+    height: calc(var(--spacing) * 8);
   }
   .h-10 {
     height: calc(var(--spacing) * 10);
@@ -1001,6 +1007,9 @@
     transition-property: opacity;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .\[lJ0z�t5��p޳�\}\'7\1e �\10 Ж9�2\\��p\7 \]\19 C��\>��\&�b���\14 �ﵺ��S�\18 ����A\*\f ��s\19 \@\,�A3�l\11 H\6 a�\10 \1b \:Ry\15 ���pnF�r\'�CA��1j\1a \] {
+    lJ0z�t5��p޳�}'7�Ж9�2\��p]C��>��&�b����ﵺ��S�����A*��s@,�A3�lHa�: Ry���pnF�r'�CA� 1j;
   }
   .\[r\:av���A\4 \12 \] {
     r: av���A;

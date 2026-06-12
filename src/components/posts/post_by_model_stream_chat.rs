@@ -319,26 +319,9 @@ pub fn StreamAiModelChatView() -> impl IntoView {
                                 >
                                     {move || if copied.get() { "Copied!" } else { "Copy" }}
                                 </button>
-                                {move || {
-                                    match active_tab.get() {
-                                        OutputTab::Rendered => {
-                                            let html = render_markdown(&response.get());
-                                            view! {
-                                                <div
-                                                    class="prose dark:prose-invert max-w-none"
-                                                    inner_html=html
-                                                />
-                                            }.into_any()
-                                        }
-                                        OutputTab::Markdown => {
-                                            view! {
-                                                <pre class="overflow-x-auto whitespace-pre-wrap break-words text-sm font-mono">
-                                                    {response.get()}
-                                                </pre>
-                                            }.into_any()
-                                        }
-                                    }
-                                }}
+                                <pre class="overflow-x-auto whitespace-pre-wrap break-words text-sm font-mono">
+                                                    {move || response.get()}
+                                </pre>
                             </div>
                         }.into_any()
                     } else {
