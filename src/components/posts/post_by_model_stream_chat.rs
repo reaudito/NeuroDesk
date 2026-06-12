@@ -65,10 +65,14 @@ fn render_markdown(markdown: &str) -> String {
 
     let mut options = Options::default();
 
+    // Enable essential markdown features including ordered/unordered lists
     options.extension.table = true;
     options.extension.strikethrough = true;
     options.extension.tasklist = true;
     options.extension.footnotes = true;
+    options.extension.autolink = true;
+    options.extension.tagfilter = true;
+    options.parse.smart = true;
 
     markdown_to_html_with_plugins(markdown, &options, &plugins)
 }
